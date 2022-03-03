@@ -1,0 +1,4 @@
+readhtml.py
+data/
+*pycache*
+*DS_Store*
