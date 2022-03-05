@@ -100,22 +100,15 @@ class Crawler():
         return True
 
 
-    def dfs_at_link(self, link, lang, visited, dfs_stack):
-        # If poem not found, DFS at all non-visited neighbours
-        # print(link, lang)
+    def bfs_at_links(self, neighbours, lang, visited):
 
-        logging.info("SEARCHING AT : {}".format(link))
-        dfs_stack = [link] + dfs_stack
+        new_neighbours = list()
+        for link in neighbours:
+            logging.info("SEARCHING AT : {}".format(link))
+            new_neighbours += self.process_link(link, lang, visited)
+        visited = visited.union(set(new_neighbours))
 
-        logging.info("SEARCH PATH  :\n{} \n\n\n".format("\n".join(dfs_stack)))
-
-        neighbours = self.process_link(link, lang, visited)
-        visited.add(link)
-        for neighbour in neighbours:
-
-            self.dfs_at_link(neighbour, lang, visited, dfs_stack)
-
-        dfs_stack.pop()
+        return new_neighbours
 
     def build_visited(self, home_page):
 
@@ -131,17 +124,26 @@ class Crawler():
         return visited
 
 
-    def dfs_and_save(self, lang_links, OUTDIR):
+    def bfs_and_save(self, lang_links, OUTDIR):
 
         visited = self.build_visited("http://kavitakosh.org/kk/कविता कोश में भाषाएँ")
         visited = visited.union(lang_links.values())
 
-        for lang, link in lang_links.items():
-            logging.info("STARTING LANG: {} \n\n\n".format(lang))
-            self.dfs_at_link(link, lang, visited, list())
-            logging.info("COLLECTED: {}".format(len(self.data[lang])))
-            self.save_lang(OUTDIR, lang)
+        current_neighbours = {key:[val] for key, val in lang_links.items()}
+        saved = set()
 
+        while True:
+            for lang, neighbours in current_neighbours.items():
+                if not neighbours and lang not in saved:
+                    self.save_lang(OUTDIR, lang)
+                    saved.add(lang)
+                    continue
+                logging.info("LANG: {} \n\n\n".format(lang))
+                current_neighbours[lang] = self.bfs_at_links(neighbours, lang, visited)
+                logging.info("COLLECTED: {}".format(len(self.data[lang])))
+
+            if not any([links for lang, links in current_neighbours.items()]):
+                break
 
     def save_lang(self, OUTDIR, lang):
 
@@ -157,7 +159,7 @@ class Crawler():
                 json.dump(text_info, f, indent = 2, ensure_ascii = False)
 
     def driver(self, lang_links, OUTDIR):
-        self.dfs_and_save(lang_links, OUTDIR)
+        self.bfs_and_save(lang_links, OUTDIR)
 
 def main():
     lang_links = {"angika":"http://kavitakosh.org/kk/अंगिका", \
