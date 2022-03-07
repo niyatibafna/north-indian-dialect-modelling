@@ -110,7 +110,7 @@ class Crawler():
 
         return new_neighbours
 
-    def build_visited(self, home_page):
+    def build_visited(self, home_page, lang_links):
 
         neighbours = self.process_link(home_page, None, set())
         visited = set(neighbours)
@@ -121,45 +121,123 @@ class Crawler():
 
         visited.add(home_page)
         visited.add("http://kavitakosh.org/kk/%E0%A4%95%E0%A4%B5%E0%A4%BF%E0%A4%A4%E0%A4%BE_%E0%A4%95%E0%A5%8B%E0%A4%B6_%E0%A4%AE%E0%A5%87%E0%A4%82_%E0%A4%AD%E0%A4%BE%E0%A4%B7%E0%A4%BE%E0%A4%8F%E0%A4%81")
+        visited = visited.union(lang_links.values())
         return visited
 
+    def save_bfs_variables(self, bfs_variables_path, visited, current_neighbours, collected, last_seen_lang):
 
-    def bfs_and_save(self, lang_links, OUTDIR):
+        logging.info("Dumping bfs variables")
 
-        visited = self.build_visited("http://kavitakosh.org/kk/कविता कोश में भाषाएँ")
-        visited = visited.union(lang_links.values())
+        if not os.path.exists(bfs_variables_path):
+            os.mkdir(bfs_variables_path)
 
-        current_neighbours = {key:[val] for key, val in lang_links.items()}
-        saved = set()
+        filepath = bfs_variables_path+"visited.json"
+        with open(filepath, "w") as f:
+            json.dump(list(visited), f)
+
+        filepath = bfs_variables_path+"current_neighbours.json"
+        with open(filepath, "w") as f:
+            json.dump(current_neighbours, f)
+
+        filepath = bfs_variables_path+"collected.json"
+        with open(filepath, "w") as f:
+            json.dump(collected, f)
+
+        filepath = bfs_variables_path+"last_seen_lang.json"
+        with open(filepath, "w") as f:
+            json.dump({"last_seen_lang": last_seen_lang}, f)
+
+        logging.info("Done!")
+
+
+    def intialize_bfs_variables(self, bfs_variables_path, lang_links):
+
+        filepath = bfs_variables_path+"visited.json"
+        if os.path.exists(filepath):
+            with open(filepath, "r") as f:
+                visited = set(json.load(f))
+        else:
+            visited = self.build_visited("http://kavitakosh.org/kk/कविता कोश में भाषाएँ", lang_links)
+
+        filepath = bfs_variables_path+"current_neighbours.json"
+        if os.path.exists(filepath):
+            with open(filepath, "r") as f:
+                current_neighbours = json.load(f)
+        else:
+            current_neighbours = {key:[val] for key, val in lang_links.items()}
+
+        filepath = bfs_variables_path+"collected.json"
+        if os.path.exists(filepath):
+            with open(filepath, "r") as f:
+                collected = json.load(f)
+        else:
+            collected = {key:0 for key in self.LANGS}
+
+        filepath = bfs_variables_path+"last_seen_lang.json"
+        if os.path.exists(filepath):
+            with open(filepath, "r") as f:
+                last_seen_lang = json.load(f)["last_seen_lang"]
+        else:
+            last_seen_lang = None
+
+        return visited, current_neighbours, collected, last_seen_lang
+
+
+    def bfs_and_save(self, lang_links, OUTDIR, bfs_variables_path):
+
+        visited, current_neighbours, collected, last_seen_lang = self.intialize_bfs_variables(bfs_variables_path, lang_links)
+
+        resuming = last_seen_lang != None
+        level = 0
 
         while True:
-            for lang, neighbours in current_neighbours.items():
-                if not neighbours and lang not in saved:
-                    self.save_lang(OUTDIR, lang)
-                    saved.add(lang)
-                    continue
-                logging.info("LANG: {} \n\n\n".format(lang))
-                current_neighbours[lang] = self.bfs_at_links(neighbours, lang, visited)
-                logging.info("COLLECTED: {}".format(len(self.data[lang])))
-
+            level += 1
+            print("STARTING LEVEL {}".format(level))
             if not any([links for lang, links in current_neighbours.items()]):
                 break
+            for lang, neighbours in current_neighbours.items():
+                if not neighbours:
+                    continue
+                if resuming:
+                    if last_seen_lang == lang:
+                        resuming = False
+                    continue
 
-    def save_lang(self, OUTDIR, lang):
+                logging.info("LANG: {} \n\n\n".format(lang))
+                current_neighbours[lang] = self.bfs_at_links(neighbours, lang, visited)
 
+                if len(self.data[lang]) > 0:
+                    self.save_lang(OUTDIR, lang, collected)
+                    self.save_bfs_variables(bfs_variables_path, visited, current_neighbours, collected, lang)
+
+            self.save_bfs_variables(bfs_variables_path, visited, current_neighbours, collected, lang)
+
+
+
+    def save_lang(self, OUTDIR, lang, collected):
+
+        logging.info("Dumping {} files for lang {}".format(len(self.data[lang]), lang))
         if not os.path.isdir(OUTDIR):
             os.mkdir(OUTDIR)
         # for lang, lang_data in self.data.items():
         lang_dir = OUTDIR + "/" + lang + "/"
         if not os.path.isdir(lang_dir):
             os.mkdir(lang_dir)
-        for file_idx, text_info in self.data[lang].items():
-            outpath = lang_dir + str(file_idx) + ".json"
+
+        for idx, text_info in self.data[lang].items():
+            collected[lang] += 1
+            outpath = lang_dir + str(collected[lang]) + ".json"
             with open(outpath, "w") as f:
                 json.dump(text_info, f, indent = 2, ensure_ascii = False)
 
-    def driver(self, lang_links, OUTDIR):
-        self.bfs_and_save(lang_links, OUTDIR)
+        for idx in range(1, len(self.data[lang])+1):
+            del self.data[lang][idx]
+
+        logging.info("COLLECTED for lang {}: {}".format(lang, collected[lang]))
+
+
+    def driver(self, lang_links, OUTDIR, bfs_variables_path):
+        self.bfs_and_save(lang_links, OUTDIR, bfs_variables_path)
 
 def main():
     lang_links = {"angika":"http://kavitakosh.org/kk/अंगिका", \
@@ -202,11 +280,13 @@ def main():
     "hindi-urdu": "हिंदी-उर्दू"
     }
 
-    # lang_links = {key:val for key, val in lang_links.items() if key == "pali"}
+    lang_links = {key:val for key, val in lang_links.items() if key == "pali"}
 
     OUTDIR = "data/crawled/"
+    bfs_variables_path = "utils/bfs_variables/"
     crawler = Crawler("http://kavitakosh.org", LANGS)
-    crawler.driver(lang_links, OUTDIR)
+
+    crawler.driver(lang_links, OUTDIR, bfs_variables_path)
 
 
 if __name__ == "__main__":
