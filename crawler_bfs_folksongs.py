@@ -12,7 +12,7 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(message)s",
     handlers=[
-        logging.FileHandler("crawler.log"),
+        logging.FileHandler("crawler_folksongs.log"),
         logging.StreamHandler(sys.stdout)
     ]
 )
@@ -76,14 +76,29 @@ class Crawler():
         # print("Parsed HTML")
 
         poem = soup.find(attrs={"class":"poem"})
+        title = soup.find("h1").find("span")
+        poem_text = ""
 
         if poem:
-            title = soup.find("h1").find("span")
+            poem_text = poem.text
+
+        if not poem and lang and title:
+            content = soup.find("div", {"id":"mw-content-text"}).find_all("p")
+            for para in content:
+                poem_text += para.text
+                if "फ़िलहाल इस पृष्ठ पर कोई सामग्री नहीं है" in poem_text:
+                    poem_text = ""
+                    break
+            if poem_text:
+                print(poem_text)
+
+        if poem_text and "लोकगीत" not in title.text:
             poem_idx = len(self.data[lang]) + 1
             self.data[lang][poem_idx]["title"] = title.text if title else ""
-            self.data[lang][poem_idx]["text"] = poem.text
+            self.data[lang][poem_idx]["text"] = poem_text
             self.data[lang][poem_idx]["lang"] = {"dev":self.LANGS[lang], "rom":lang}
             return list()
+
 
         list_tags = {"ul", "ol"}
         neighbours = list()
@@ -101,16 +116,18 @@ class Crawler():
                     neighbour = self.validate_link(link.get("href"))
                     if neighbour is not None:
                         title = link.get("title")
-                        if self.should_visit(neighbour, title, visited):
+                        if self.should_visit(neighbour, title, visited, lang):
                             neighbours.append(neighbour)
                             logging.info("{}\t{}".format(title, lang))
 
         logging.info("\n\n\n")
         return neighbours
 
-    def should_visit(self, link, title, visited):
+    def should_visit(self, link, title, visited, lang):
         '''Returns True if we need to dfs at link'''
-        bad_words = {"हाइकु", "श्रेणी", "साहित्य"}
+        bad_words = {"हाइकु", "श्रेणी", "साहित्य", "लोकगीत"}
+        # if lang is not None and title is not None and self.LANGS[lang] not in title:
+            # return False
         if link in visited or "otherapps" in link:
             return False
         for key, val in self.LANGS.items():
@@ -220,6 +237,7 @@ class Crawler():
                 break
             for lang, neighbours in current_neighbours.items():
                 if not neighbours:
+                    logging.info("No neigbours for {}".format(lang))
                     continue
                 if resuming:
                     if last_seen_lang == lang:
@@ -248,6 +266,12 @@ class Crawler():
             os.mkdir(lang_dir)
 
         for idx, text_info in self.data[lang].items():
+            # try:
+            #     assert self.LANGS[lang] in text_info["title"]
+            # except:
+            #     print(text_info)
+            #     print(self.LANGS[lang])
+            #     raise
             collected[lang] += 1
             outpath = lang_dir + str(collected[lang]) + ".json"
             with open(outpath, "w") as f:
@@ -264,50 +288,72 @@ class Crawler():
 
 def main():
     lang_links = {
-    "pali": "http://kavitakosh.org/kk/पालि", \
-    "angika":"http://kavitakosh.org/kk/अंगिका", \
-    "awadhi": "http://kavitakosh.org/kk/अवधी", \
-    "garwali": "http://kavitakosh.org/kk/गढ़वाली", \
-    "gujarati": "http://kavitakosh.org/kk/गुजराती", \
-    "chattisgarhi": "http://kavitakosh.org/kk/छत्तीसगढ़ी", \
-    "nepali": "http://kavitakosh.org/kk/नेपाली", \
-    "braj": "http://kavitakosh.org/kk/ब्रज भाषा", \
-    "marathi": "http://kavitakosh.org/kk/मराठी", \
-    "maithili": "http://kavitakosh.org/kk/मैथिली", \
-    "rajasthani": "http://kavitakosh.org/kk/राजस्थानी", \
-    "sanskrit": "http://kavitakosh.org/kk/संस्कृतम्‌", \
-    "sindhi": "http://kavitakosh.org/kk/सिन्धी", \
-    "hariyanvi": "http://kavitakosh.org/kk/हरियाणवी", \
-    "bhojpuri": "http://kavitakosh.org/kk/भोजपुरी", \
-    "magahi": "http://kavitakosh.org/kk/मगही", \
-    "bajjika": "http://kavitakosh.org/kk/बज्जिका", \
-    "hindi-urdu": "http://kavitakosh.org/kk/रचनाकारों की सूची"
+    "awadhi": "http://kavitakosh.org/kk/अवधी_लोकगीत", \
+    "kannauji": "http://kavitakosh.org/kk/कन्नौजी_लोकगीत", \
+    "kashmiri": "http://kavitakosh.org/kk/कश्मीरी_लोकगीत", \
+    "kumaoni": "http://kavitakosh.org/kk/कुमाँऊनी_लोकगीत", \
+    "khadi_boli": "http://kavitakosh.org/kk/खड़ी_बोली_लोकगीत", \
+    "garwali": "http://kavitakosh.org/kk/गढ़वाली_लोकगीत", \
+    "gujarati": "http://kavitakosh.org/kk/गुजराती_लोकगीत", \
+    "chattisgarhi": "http://kavitakosh.org/kk/छत्तीसगढ़ी_लोकगीत", \
+    "nimaadi": "http://kavitakosh.org/kk/निमाड़ी_लोकगीत", \
+    "punjabi": "http://kavitakosh.org/kk/पंजाबी_लोकगीत", \
+    "bangla": "http://kavitakosh.org/kk/बांग्ला_लोकगीत", \
+    "bundeli": "http://kavitakosh.org/kk/बुन्देली_लोकगीत", \
+    "brajbhasha": "http://kavitakosh.org/kk/ब्रजभाषा_लोकगीत", \
+    "bhadavari": "http://kavitakosh.org/kk/भदावरी_लोकगीत", \
+    "bhojpuri": "http://kavitakosh.org/kk/भोजपुरी_लोकगीत", \
+    "magahi": "http://kavitakosh.org/kk/मगही_लोकगीत", \
+    "marathi": "http://kavitakosh.org/kk/मराठी_लोकगीत", \
+    "madiya": "http://kavitakosh.org/kk/माड़िया_लोकगीत", \
+    "malwi": "http://kavitakosh.org/kk/मालवी_लोकगीत", \
+    "maithili": "http://kavitakosh.org/kk/मैथिली_लोकगीत", \
+    "rajasthani": "http://kavitakosh.org/kk/राजस्थानी_लोकगीत", \
+    "hariyanvi": "http://kavitakosh.org/kk/हरियाणवी_लोकगीत", \
+    "hindi": "http://kavitakosh.org/kk/हिन्दी_लोकगीत", \
+    "himachali": "http://kavitakosh.org/kk/हिमाचली_लोकगीत", \
+    "sanskrit": "http://kavitakosh.org/kk/संस्कृत_लोकगीत", \
+    "koraku": "http://kavitakosh.org/kk/कोरकू_लोकगीत", \
+    "bhil": "http://kavitakosh.org/kk/भील_लोकगीत", \
+    "baiga": "http://kavitakosh.org/kk/बैगा_लोकगीत", \
+    "angika":"http://kavitakosh.org/kk/अंगिका_लोकगीत", \
     }
     LANGS = {
-    "pali": "पालि", \
-    "angika":"अंगिका", \
+    "bhil": "भील", \
+    "baiga": "बैगा", \
+    "koraku": "कोरक", \
+    "angika": "अंगिका", \
     "awadhi": "अवधी", \
-    "garwali": "गढ़वाली", \
-    "gujarati": "गुजराती", \
-    "chattisgarhi": "छत्तीसगढ़ी", \
-    "nepali": "नेपाली", \
-    "braj": "ब्रज भाषा", \
-    "marathi": "मराठी", \
-    "maithili": "मैथिली", \
-    "rajasthani": "राजस्थानी", \
-    "sanskrit": "संस्कृतम्‌", \
-    "sindhi": "सिन्धी", \
-    "hariyanvi": "हरियाणवी", \
+    "kannauji": "कन्नोजी", \
+    "kashmiri": "कश्मीरी", \
+    "kumaoni": "कुमाँऊनी", \
+    "khadi_boli": "खड़ी बोली", \
+    "garwali": "गढ़वाली", \
+    "gujarati": "गुजरात", \
+    "chattisgarhi": "छत्तीसगढ", \
+    "nimaadi": "निमाड़ी", \
+    "punjabi": "पंजाबी", \
+    "bangla": "बांग्ला", \
+    "bundeli": "बुन्देली", \
+    "brajbhasha": "ब्रजभाषा", \
+    "bhadavari": "भदावरी", \
     "bhojpuri": "भोजपुरी", \
     "magahi": "मगही", \
-    "bajjika": "बज्जिका", \
-    "hindi-urdu": "हिंदी-उर्दू"
+    "marathi": "मराठी", \
+    "madiya": "माड़िया", \
+    "malwi": "मालवी", \
+    "maithili": "मैथिली", \
+    "rajasthani": "राजस्थानी", \
+    "hariyanvi": "हरियाणवी", \
+    "hindi": "हिन्दी", \
+    "himachali": "हिमाचली", \
+    "sanskrit": "संस्कृत", \
     }
 
     # lang_links = {key:val for key, val in lang_links.items() if key == "pali"}
 
-    OUTDIR = "data/crawled/poetry"
-    bfs_variables_path = "utils/bfs_variables_poetry/bfs_variables/"
+    OUTDIR = "data/crawled/folksongs/"
+    bfs_variables_path = "utils/bfs_variables_folksongs/"
     crawler = Crawler("http://kavitakosh.org", LANGS)
 
     crawler.driver(lang_links, OUTDIR, bfs_variables_path)
