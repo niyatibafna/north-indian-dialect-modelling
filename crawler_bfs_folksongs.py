@@ -86,11 +86,11 @@ class Crawler():
             content = soup.find("div", {"id":"mw-content-text"}).find_all("p")
             for para in content:
                 poem_text += para.text
-                if "फ़िलहाल इस पृष्ठ पर कोई सामग्री नहीं है" in poem_text:
-                    poem_text = ""
-                    break
             if poem_text:
                 print(poem_text)
+
+        if "फ़िलहाल इस पृष्ठ पर कोई सामग्री नहीं है" in poem_text:
+            poem_text = ""
 
         if poem_text and "लोकगीत" not in title.text:
             poem_idx = len(self.data[lang]) + 1
@@ -125,7 +125,7 @@ class Crawler():
 
     def should_visit(self, link, title, visited, lang):
         '''Returns True if we need to dfs at link'''
-        bad_words = {"हाइकु", "श्रेणी", "साहित्य", "लोकगीत"}
+        bad_words = {"हाइकु", "श्रेणी", "साहित्य", "लोकगीत", "Lalit", "परिचय"}
         # if lang is not None and title is not None and self.LANGS[lang] not in title:
             # return False
         if link in visited or "otherapps" in link:
@@ -198,6 +198,9 @@ class Crawler():
                 visited = set(json.load(f))
         else:
             visited = self.build_visited("http://kavitakosh.org/kk/कविता कोश में भाषाएँ", lang_links)
+        with open("utils/bfs_variables_poetry/bfs_variables/visited.json", "r") as f:
+            poetry_visited = set(json.load(f))
+        visited = visited.union(poetry_visited)
 
         filepath = bfs_variables_path+"current_neighbours.json"
         if os.path.exists(filepath):
@@ -228,9 +231,9 @@ class Crawler():
         visited, current_neighbours, collected, last_seen_lang = self.intialize_bfs_variables(bfs_variables_path, lang_links)
 
         resuming = last_seen_lang != None
-        level = 0
+        level = 1
 
-        while True:
+        while level < 4:
             level += 1
             logging.info("STARTING LEVEL {}".format(level))
             if not any([links for lang, links in current_neighbours.items()]):
