@@ -4,6 +4,7 @@ import json
 import os
 import collections
 import string
+from indicnlp.tokenize import indic_tokenize
 
 class CrawledData:
 
@@ -12,11 +13,26 @@ class CrawledData:
 
     def preprocess(self, file_dict, remove_punctuation = True):
         '''Tokenize, remove punctuation'''
-        file_dict["text"] = " ".join(file_dict["text"].split("\n"))
+
+        file_dict["text"] = indic_tokenize.trivial_tokenize(file_dict["text"])
+
+        #Deal with Roman characters
+        avoid_chars = string.ascii_lowercase
+        for idx, word in enumerate(file_dict["text"]):
+            new_word = word
+            for c in word:
+                new_word += c if c not in string.ascii_lowercase
+            file_dict["text"][idx] = new_word
+
+        #Remove spaces
+        file_dict["text"] = [word for word in file_dict["text"] if word not in {"\n", "\t", " ", ""}]
+
+        #Remove punctuation
         if remove_punctuation:
-            file_dict["text"] = "".join([c if c not in string.punctuation+"।" else " " for c in file_dict["text"]])
-#         file_dict["text"] = file_dict["text"].replace("\n", " ")
-        file_dict["text"] = " ".join(file_dict["text"].split())
+            file_dict["text"] = [word for word in file_dict["text"] if word not in string.punctuation + "।" + "॥"]
+
+        #Return as text string
+        file_dict["text"] = " ".join(file_dict["text"])
         return file_dict
 
     def read_crawled_data(self, langs = None, remove_punctuation = True):
