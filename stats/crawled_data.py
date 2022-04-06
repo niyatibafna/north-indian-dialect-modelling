@@ -14,14 +14,15 @@ class CrawledData:
     def preprocess(self, file_dict, remove_punctuation = True):
         '''Tokenize, remove punctuation'''
 
+        file_dict["text"] = " ".join(file_dict["text"].split("\n"))
         file_dict["text"] = indic_tokenize.trivial_tokenize(file_dict["text"])
 
         #Deal with Roman characters
         avoid_chars = string.ascii_lowercase
         for idx, word in enumerate(file_dict["text"]):
-            new_word = word
+            new_word = ""
             for c in word:
-                new_word += c if c not in string.ascii_lowercase
+                new_word += c if c not in string.ascii_lowercase else ""
             file_dict["text"][idx] = new_word
 
         #Remove spaces
@@ -36,8 +37,7 @@ class CrawledData:
         return file_dict
 
     def read_crawled_data(self, langs = None, remove_punctuation = True):
-        '''Reads data in given path and stores results as JSON
-        in self.data'''
+        '''Reads data in given path and stores results as JSON in self.data'''
         self.data = collections.defaultdict(lambda: dict())
         for lang in os.listdir(self.DATAPATH):
             if langs and lang not in langs:
@@ -56,7 +56,7 @@ class CrawledData:
                     raise
 
 
-print("booyah2")
+# print("booyah2")
 # cd = CrawledData("../data/crawled/folksongs/")
 # cd.read_crawled_data()
 # print(len(cd.data))
