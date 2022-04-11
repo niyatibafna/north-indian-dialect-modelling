@@ -271,7 +271,7 @@ def main():
     "gujarati": "http://kavitakosh.org/kk/गुजराती", \
     "chattisgarhi": "http://kavitakosh.org/kk/छत्तीसगढ़ी", \
     "nepali": "http://kavitakosh.org/kk/नेपाली", \
-    "braj": "http://kavitakosh.org/kk/ब्रज भाषा", \
+    "brajbhasha": "http://kavitakosh.org/kk/ब्रज भाषा", \
     "marathi": "http://kavitakosh.org/kk/मराठी", \
     "maithili": "http://kavitakosh.org/kk/मैथिली", \
     "rajasthani": "http://kavitakosh.org/kk/राजस्थानी", \
@@ -291,7 +291,7 @@ def main():
     "gujarati": "गुजराती", \
     "chattisgarhi": "छत्तीसगढ़ी", \
     "nepali": "नेपाली", \
-    "braj": "ब्रज भाषा", \
+    "braj": "ब्रजभाषा", \
     "marathi": "मराठी", \
     "maithili": "मैथिली", \
     "rajasthani": "राजस्थानी", \

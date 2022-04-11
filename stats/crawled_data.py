@@ -8,8 +8,9 @@ from indicnlp.tokenize import indic_tokenize
 
 class CrawledData:
 
-    def __init__(self, DATAPATH):
-        self.DATAPATH = DATAPATH
+    def __init__(self):
+        # self.DATAPATH = DATAPATH
+        self.data = collections.defaultdict(lambda: dict())
 
     def preprocess(self, file_dict, remove_punctuation = True):
         '''Tokenize, remove punctuation'''
@@ -36,24 +37,28 @@ class CrawledData:
         file_dict["text"] = " ".join(file_dict["text"])
         return file_dict
 
-    def read_crawled_data(self, langs = None, remove_punctuation = True):
+    def read_crawled_data(self, DATAPATH, langs = None, remove_punctuation = True):
         '''Reads data in given path and stores results as JSON in self.data'''
-        self.data = collections.defaultdict(lambda: dict())
-        for lang in os.listdir(self.DATAPATH):
+
+        for lang in os.listdir(DATAPATH):
             if langs and lang not in langs:
                 continue
+            print("Getting files for {}".format(lang))
             if ".DS_Store" in lang:
                 continue
-            lang_dir = self.DATAPATH+"/"+lang+"/"
+            lang_dir = DATAPATH+"/"+lang+"/"
             for file in os.listdir(lang_dir):
                 # print(lang_dir+"/"+file)
+                if ".DS_Store" in lang_dir + file:
+                    continue
                 try:
                     with open(lang_dir+"/"+file, "r") as f:
-                        self.data[lang][file.split(".")[0]] = \
+                        # file.split(".")[0]
+                        self.data[lang][len(self.data[lang])] = \
                         self.preprocess(json.load(f), remove_punctuation)
                 except:
                     print("Error in loading: {}/{}".format(lang, file))
-                    raise
+                    # raise
 
 
 # print("booyah2")

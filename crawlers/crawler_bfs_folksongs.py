@@ -313,7 +313,7 @@ def main():
     "maithili": "http://kavitakosh.org/kk/मैथिली_लोकगीत", \
     "rajasthani": "http://kavitakosh.org/kk/राजस्थानी_लोकगीत", \
     "hariyanvi": "http://kavitakosh.org/kk/हरियाणवी_लोकगीत", \
-    "hindi": "http://kavitakosh.org/kk/हिन्दी_लोकगीत", \
+    "hindi-urdu": "http://kavitakosh.org/kk/हिन्दी_लोकगीत", \
     "himachali": "http://kavitakosh.org/kk/हिमाचली_लोकगीत", \
     "sanskrit": "http://kavitakosh.org/kk/संस्कृत_लोकगीत", \
     "koraku": "http://kavitakosh.org/kk/कोरकू_लोकगीत", \
@@ -348,7 +348,7 @@ def main():
     "maithili": "मैथिली", \
     "rajasthani": "राजस्थानी", \
     "hariyanvi": "हरियाणवी", \
-    "hindi": "हिन्दी", \
+    "hindi": "हिंदी-उर्दू", \
     "himachali": "हिमाचली", \
     "sanskrit": "संस्कृत", \
     }
