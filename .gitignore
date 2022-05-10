@@ -1,5 +1,5 @@
 readhtml.py
-data/
+*data*
 *pycache*
 *DS_Store*
 utils/
