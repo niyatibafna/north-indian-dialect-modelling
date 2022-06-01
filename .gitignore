@@ -11,3 +11,7 @@ try_parse.py
 misc_files
 *lexicons/*
 mli_ned/lexicons/
+*.bin
+*.json
+*.txt
+sound_changes
