@@ -16,16 +16,17 @@ for line in f:
     target.append(line.split("|||")[1].strip())
 
 
-alignments = [alignment for alignment in alignments if alignment != ""]
+# alignments = [alignment for alignment in alignments]
 
-assert(len(source) == len(target) == len(alignments))
+# assert(len(source) == len(target) == len(alignments))
 
 dictionary = defaultdict(lambda: defaultdict(lambda: 0))
 
 for idx in range(len(alignments)):
     # print(source[idx])
     # print(target[idx])
-
+    if idx >= min(len(source), len(target), len(alignments)):
+        continue
     source_words = source[idx].strip().split()
     target_words = target[idx].strip().split()
     align = [(int(x.split("-")[0]), int(x.split("-")[1])) for x in alignments[idx].strip().split()]

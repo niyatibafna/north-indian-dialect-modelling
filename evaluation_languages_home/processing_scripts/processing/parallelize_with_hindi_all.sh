@@ -10,7 +10,7 @@ mkdir $OUTDIR
 for file in $(ls $INDIR)
 do
     # For Hindi as source:
-    python3 parallelize_with_hindi.py $HIN_PATH $INDIR$file > $OUTDIR$file
+    # python3 parallelize_with_hindi.py $HIN_PATH $INDIR$file > $OUTDIR$file
     # For Hindi as target:
-    # python3 parallelize_with_hindi.py $INDIR$file $HIN_PATH > $OUTDIR$file
+    python3 parallelize_with_hindi.py $INDIR$file $HIN_PATH > $OUTDIR$file
 done

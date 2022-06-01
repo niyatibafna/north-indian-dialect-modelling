@@ -25,7 +25,8 @@ for idx in range(len(l2)):
 
 
 for eng_sent in set(eng_to_l1.keys()).intersection(set(eng_to_l2.keys())):
-    print(eng_to_l1[eng_sent], " ||| ", eng_to_l2[eng_sent])
+    if eng_to_l1[eng_sent] != "" and eng_to_l2[eng_sent] != "":
+        print(eng_to_l1[eng_sent], " ||| ", eng_to_l2[eng_sent])
 
 # print("Source-eng sentences: ", len(l1))
 # print("Hindi-eng sentences: ", len(l2))

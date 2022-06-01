@@ -33,7 +33,8 @@ assert(len(source) == len(target))
 
 parallel_data = list()
 for idx in range(len(source)):
-    parallel_data.append(source[idx] + " ||| " + target[idx])
+    if source[idx] != "" and target[idx] != "":
+        parallel_data.append(source[idx] + " ||| " + target[idx])
 
 for sent in parallel_data:
     print(sent)
