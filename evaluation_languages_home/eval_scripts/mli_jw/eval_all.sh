@@ -1,8 +1,8 @@
 #!/bin/sh
 
 GOLDDIR="../../eval_data/lexicons/hindi-urdu_source/"
-PREDDIR="../../../mli_od/lexicons_ned_top5/"
-OUTDIR="../../eval_results/mli_ned/"
+PREDDIR="../../../mli_od/lexicons_jw_top5/"
+OUTDIR="../../eval_results/mli_jw/"
 eval_type="loose"
 OUTPATH=$OUTDIR$"results_top5_hindi-urdu_source_"$eval_type".json"
 

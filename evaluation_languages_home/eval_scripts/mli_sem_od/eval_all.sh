@@ -1,10 +1,10 @@
 #!/bin/sh
 
 GOLDDIR="../../eval_data/lexicons/hindi-urdu_source/"
-PREDDIR="../../../mli_od/lexicons_ned_top5/"
-OUTDIR="../../eval_results/mli_ned/"
+PREDDIR="../../../mli_sem_od/lexicons_K50_top5_target0/"
+OUTDIR="../../eval_results/mli_em_od/"
 eval_type="loose"
-OUTPATH=$OUTDIR$"results_top5_hindi-urdu_source_"$eval_type".json"
+OUTPATH=$OUTDIR$"results_top5_target0_hindi-urdu_source_"$eval_type".json"
 
 mkdir -p $OUTDIR
 rm $OUTPATH

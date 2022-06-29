@@ -1,87 +1,102 @@
 {
   "angika": {
-    "accuracy": 0.1839080459770115,
-    "found": 87,
+    "accuracy": 0.20689655172413793,
+    "found": 116,
     "total": 141
   },
   "awadhi": {
-    "accuracy": 0.19010416666666666,
-    "found": 96,
+    "accuracy": 0.18902439024390244,
+    "found": 123,
     "total": 148
   },
   "bajjika": {
-    "accuracy": 0.08983451536643026,
-    "found": 94,
+    "accuracy": 0.10930442637759712,
+    "found": 123,
     "total": 149
   },
   "bhil": {
-    "accuracy": 0.13863357843137256,
-    "found": 96,
+    "accuracy": 0.1274126838235294,
+    "found": 128,
     "total": 156
   },
   "bhojpuri": {
-    "accuracy": 0.29310344827586204,
-    "found": 87,
+    "accuracy": 0.2565217391304348,
+    "found": 115,
     "total": 139
   },
   "brajbhasha": {
-    "accuracy": 0.3194444444444445,
-    "found": 96,
+    "accuracy": 0.2965879265091863,
+    "found": 127,
     "total": 155
   },
   "bundeli": {
-    "accuracy": 0.27228464419475656,
-    "found": 89,
+    "accuracy": 0.22421652421652422,
+    "found": 117,
     "total": 139
   },
   "chattisgarhi": {
-    "accuracy": 0.25,
-    "found": 89,
+    "accuracy": 0.22826086956521738,
+    "found": 115,
     "total": 136
   },
   "garwali": {
-    "accuracy": 0.1565934065934066,
-    "found": 91,
+    "accuracy": 0.13541666666666666,
+    "found": 120,
     "total": 143
+  },
+  "hariyanvi": {
+    "accuracy": 0.3267195767195767,
+    "found": 126,
+    "total": 153
   },
   "hindi-urdu": {
     "accuracy": 1.0,
-    "found": 102,
+    "found": 136,
     "total": 171
   },
   "koraku": {
     "accuracy": 0.0,
-    "found": 91,
+    "found": 116,
     "total": 140
   },
   "kumaoni": {
-    "accuracy": 0.04074074074074074,
-    "found": 90,
+    "accuracy": 0.025020177562550445,
+    "found": 118,
     "total": 138
   },
   "magahi": {
-    "accuracy": 0.1836734693877551,
-    "found": 98,
+    "accuracy": 0.14728682170542637,
+    "found": 129,
     "total": 159
   },
   "maithili": {
-    "accuracy": 0.1404494382022472,
-    "found": 89,
+    "accuracy": 0.14957264957264957,
+    "found": 117,
     "total": 140
   },
+  "malwi": {
+    "accuracy": 0.14,
+    "found": 125,
+    "total": 153
+  },
+  "marathi": {
+    "accuracy": 0.04310344827586207,
+    "found": 116,
+    "total": 138
+  },
   "nepali": {
-    "accuracy": 0.07894736842105263,
-    "found": 76,
+    "accuracy": 0.08421052631578947,
+    "found": 95,
     "total": 105
   },
   "rajasthani": {
-    "accuracy": 0.29120879120879123,
-    "found": 91,
+    "accuracy": 0.2375,
+    "found": 120,
     "total": 144
   },
   "sindhi": {
-    "accuracy": 0.06896551724137931,
-    "found": 87,
+    "accuracy": 0.07017543859649122,
+    "found": 114,
     "total": 134
   }
 }
