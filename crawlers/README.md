@@ -1,10 +1,11 @@
-# Collected Data
+# Data Collection for the Indic Dialect Continuum (26 languages)
 
-Here is the summary of the collected data:
+## Collected Data
 
-Here is a summary of the collected data:
+Here is the summary of the collected data. We separate the languages into Bands 1, 2, and 3, by decreasing availability of pre-existing data, and report averages per band. Band 3 (i.e. Rajasthani, Himachali onwards) are currently zero-resourced.
 
-| Language      | Folksongs | Poetry | Folksongs tokens | Poetry \par tokens | Total Pieces | Total \par tokens |
+
+| Language      | Folksongs | Poetry | Folksongs tokens | Poetry tokens      | Total Pieces | Total tokens |
 |---------------|-----------|--------|------------------|--------------------|--------------|-------------------|
 | Hindi-urdu    | 1         | 54408  | 100              | 7127897            | 54409        | 7127997           |
 | Marathi       | 5         | 30     | 1412             | 1915               | 35           | 3327              |
@@ -41,11 +42,27 @@ Here is a summary of the collected data:
 | Bajjika       | 0         | 71     | 0                | 7414               | 71           | 7414              |
 | **Avg.**      |           |        |                  |                    |              | 109,751.842       |
 
-# Available Data
+## Available Data
 
-The folksongs listed for all the languages above are available [here](../data/crawled_data/)
+The folksongs listed for all the languages above are available ... TODO
 
-# Running the crawler
+## Running the crawler
+
+Requirements:
+
+* [```requests```](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ved=2ahUKEwiy-9nTveb4AhWau6QKHa0jBhYQFnoECAYQAQ&url=https%3A%2F%2Fpypi.org%2Fproject%2Frequests%2F&usg=AOvVaw1-RuMU-5ZQL9xNuNrQ3jg4)
+
+* [```BeautifulSoup```](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ved=2ahUKEwjz2cPhveb4AhUQy6QKHbWqCQUQFnoECAYQAQ&url=https%3A%2F%2Fbeautiful-soup-4.readthedocs.io%2Fen%2Flatest%2F&usg=AOvVaw3ox0yL2znF6w6A1_ShHM5s)
+
+To crawl the poetry or folksongs, simply run:
+
+```python crawler_bfs_poetry.py```
+
+or 
+
+```python crawler_bfs_folksongs.py```
+
+respectively. The data will be crawled into the directory ```../data/poetry/``` (similarity for folksongs). Intermediate bfs variables will be stored in ```crawl_variables/```; this can be changed if required or automatically deleted post-crawl.
 
 
 
