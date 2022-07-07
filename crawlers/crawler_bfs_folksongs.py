@@ -198,7 +198,7 @@ class Crawler():
                 visited = set(json.load(f))
         else:
             visited = self.build_visited("http://kavitakosh.org/kk/कविता कोश में भाषाएँ", lang_links)
-        with open("utils/bfs_variables_poetry/bfs_variables/visited.json", "r") as f:
+        with open(bfs_variables_path + "visited.json", "r") as f:
             poetry_visited = set(json.load(f))
         visited = visited.union(poetry_visited)
 
@@ -355,8 +355,8 @@ def main():
 
     # lang_links = {key:val for key, val in lang_links.items() if key == "pali"}
 
-    OUTDIR = "data/crawled/folksongs/"
-    bfs_variables_path = "utils/bfs_variables_folksongs/"
+    OUTDIR = "../data/crawled/folksongs/"
+    bfs_variables_path = "crawl_variables/bfs_variables_folksongs/bfs_variables/"
     crawler = Crawler("http://kavitakosh.org", LANGS)
 
     crawler.driver(lang_links, OUTDIR, bfs_variables_path)
