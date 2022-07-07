@@ -15,3 +15,4 @@ mli_ned/lexicons/
 *.json
 *.txt
 sound_changes
+archive/
