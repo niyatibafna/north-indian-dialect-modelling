@@ -26,7 +26,7 @@ The pipeline requires:
 If required, the path to the clone can be set in ```processing_scripts/processing/read_alignments_all_hin.sh```,
 by modifying the variable ```$FA_DIR```.
 
-* [indictrans](https://github.com/libindic/indic-trans), cloned and installed.
+* [indic-trans](https://github.com/libindic/indic-trans), cloned and installed.
 
 ### Running
 
