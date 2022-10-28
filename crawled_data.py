@@ -36,6 +36,49 @@ class CrawledData:
         #Return as text string
         file_dict["text"] = " ".join(file_dict["text"])
         return file_dict
+    
+    def preprocess_hindialect(self, file_dict, remove_punctuation = False):
+        '''For version 1.1,
+        ## Removing bad letters:
+        ##  - Removing the "wrong" punctuation: repeated punctuation characters
+        ##  - Replacing multiple newlines by a single newline 
+        ##  - Replacing all spaces with a single space
+        ## Basic tokenization '''
+        
+        acceptable_punc = ".,;:?'" + '"'
+        
+        file_dict["text"] = file_dict["text"].strip("\n")
+        file_dict["text"] = file_dict["text"].strip(" ")
+        
+        # Other char-level cleaning
+        new_text = ""
+        for ch in file_dict["text"]:
+            # Replace weird spaces with regular spaces
+            if ord(ch) in ([32, 160, 5760] + list(range(8192, 8028))):
+                ch = " "                         
+            
+            # Remove certain punctuation
+            if ch in string.punctuation and ch not in acceptable_punc:
+                continue
+               
+            if ch in string.ascii_lowercase:
+                continue
+                        
+            new_text += ch 
+            
+        
+        file_dict["text"] =  " ".join(indic_tokenize.trivial_tokenize(new_text))
+        # Remove mutiple newlines
+        file_dict["text"] = "\n".join([word for word in file_dict["text"].split("\n") if word not in string.whitespace + ""])
+        assert "\n\n" not in file_dict["text"]
+        file_dict["title"] = file_dict["title"].split("/")[0].strip()
+
+        return file_dict
+            
+            
+
+        
+        
 
     def read_crawled_data(self, DATAPATH, langs = None, remove_punctuation = True):
         '''Reads data in given path and stores results as JSON in self.data'''
@@ -55,7 +98,7 @@ class CrawledData:
                     with open(lang_dir+"/"+file, "r") as f:
                         # file.split(".")[0]
                         self.data[lang][len(self.data[lang])] = \
-                        self.preprocess(json.load(f), remove_punctuation)
+                        self.preprocess_hindialect(json.load(f), remove_punctuation)
                 except:
                     print("Error in loading: {}/{}".format(lang, file))
                     # raise
