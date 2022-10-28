@@ -4,7 +4,7 @@ This project consists of four stages:
 
 ## Data Collection for "dialects" in the North Indian "Hindi belt".
 
-We crawl data from [Kavita Kosh](http://kavitakosh.org/) for 31 languages. We have been authorized to release only part of this data; however, our crawler is available to use in [here](crawlers/).
+We crawl data from [Kavita Kosh](http://kavitakosh.org/) for 31 languages. We have been authorized to release only part of this data, which is publicly available at http://hdl.handle.net/11234/1-4787. However, our crawler is available to use [here](crawlers/). 
 
 ## Probing Data
 
